@@ -63,10 +63,7 @@ def get_count_per_filter(
         tag_family: Counter(
             **{
                 SmartTag.no_smart_tag.value: sum(
-                    ds.to_pandas()[SMART_TAGS_FAMILY_MAPPING[tag_family]]  # type: ignore[index]
-                    .to_numpy()
-                    .sum(1)
-                    == 0
+                    ds.to_pandas()[SMART_TAGS_FAMILY_MAPPING[tag_family]].to_numpy().sum(1) == 0
                 )
             },
             **{

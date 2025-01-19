@@ -397,11 +397,11 @@ export interface components {
       description: string;
       citation: string;
       features: { [key: string]: any };
-      inputs_description: string;
-      homepage: string;
-      license: string;
-      codebase_urls: string[];
-      reference_urls: string[];
+      inputs_description?: string;
+      homepage?: string;
+      license?: string;
+      codebase_urls?: string[];
+      reference_urls?: string[];
       streamable?: boolean;
       format?: string;
       metric_name?: string;

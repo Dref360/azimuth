@@ -4,7 +4,7 @@
 import itertools
 import os
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import DefaultDict, Dict, List, Optional, Tuple, cast
 
 import numpy as np
 import torch
@@ -91,7 +91,9 @@ class NeighborsTaggingModule(DatasetResultModule[SimilarityConfig]):
 
         similarity_config: SimilarityOptions = assert_not_none(self.config.similarity)
 
-        conflicting_neighbors_tags = defaultdict(list)
+        conflicting_neighbors_tags: DefaultDict[
+            DatasetSplitName, List[Dict[SmartTag, bool]]
+        ] = defaultdict(list)
         no_close_tags = defaultdict(list)
         for split_name, tagname_conflicting_neighbors, tagname_no_close in zip(
             [DatasetSplitName.train, DatasetSplitName.eval],
@@ -129,21 +131,30 @@ class NeighborsTaggingModule(DatasetResultModule[SimilarityConfig]):
             no_close_tags[DatasetSplitName.train],
             no_close_tags[DatasetSplitName.eval],
         ):
+            conflicting_neighbors_train_t = cast(
+                Optional[Dict[SmartTag, bool]], conflicting_neighbors_train
+            )
+            conflicting_neighbors_eval_t = cast(
+                Optional[Dict[SmartTag, bool]], conflicting_neighbors_eval
+            )
+            no_close_train_t = cast(Optional[Dict[SmartTag, bool]], no_close_train)
+            no_close_eval_t = cast(Optional[Dict[SmartTag, bool]], no_close_eval)
+
             results.append(
                 TaggingResponse(
                     tags={
                         SmartTag.conflicting_neighbors_train: False
-                        if conflicting_neighbors_train is None
-                        else conflicting_neighbors_train[SmartTag.conflicting_neighbors_train],
+                        if conflicting_neighbors_train_t is None
+                        else conflicting_neighbors_train_t[SmartTag.conflicting_neighbors_train],
                         SmartTag.conflicting_neighbors_eval: False
-                        if conflicting_neighbors_eval is None
-                        else conflicting_neighbors_eval[SmartTag.conflicting_neighbors_eval],
+                        if conflicting_neighbors_eval_t is None
+                        else conflicting_neighbors_eval_t[SmartTag.conflicting_neighbors_eval],
                         SmartTag.no_close_train: False
-                        if no_close_train is None
-                        else no_close_train[SmartTag.no_close_train],
+                        if no_close_train_t is None
+                        else no_close_train_t[SmartTag.no_close_train],
                         SmartTag.no_close_eval: False
-                        if no_close_eval is None
-                        else no_close_eval[SmartTag.no_close_eval],
+                        if no_close_eval_t is None
+                        else no_close_eval_t[SmartTag.no_close_eval],
                     },
                     adds={
                         DatasetColumn.neighbors_train: train_neighbors or [],

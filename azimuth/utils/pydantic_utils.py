@@ -10,7 +10,7 @@ from pydantic.main import inherit_config
 from pydantic.utils import is_valid_field
 
 if TYPE_CHECKING:
-    from pydantic.typing import AnyClassMethod, DictStrAny  # type: ignore
+    from pydantic.typing import AnyClassMethod, DictStrAny
 
     Model = TypeVar("Model", bound="BaseModel")
 
